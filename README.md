@@ -1,7 +1,7 @@
 # Air Quality Egg Shield to Cosm - v0.0.1
 
 This project contains a basic sketch for uploading data from an Air Quality Egg
-Shield mounted on a Nanode to Cosm.
+Shield mounted on a Nanode to [Cosm](https://cosm.com).
 
 I've only tested this sketch on a Nanode, but it should work with any device
 that uses the ENC28J60 Ethernet controller. This means it *will not* work with a
@@ -11,6 +11,10 @@ but all the networky stuff would be completely different.
 This sketch basically combines one of the EggBus examples with the Pachube
 example in the EtherCard library, so everything that's right in this code is
 copied from there, any mistakes are from my merging of the two.
+
+The published feed should be viewable at Cosm here:
+
+https://cosm.com/feeds/84633
 
 ## Requirements
 
