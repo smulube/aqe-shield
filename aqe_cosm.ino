@@ -1,14 +1,28 @@
-// Sketch to send data from my Air Quality Egg Shield to Cosm
-// Copyright (C) 2012 Sam Mulube
-// 
-// This sketch will only work on devices that can use the EtherCard library,
-// i.e. devices containing the ENC28J60 Ethernet controller. In actuality
-// I've only tested this on a Nanode.
+// # Air Quality Egg Shield to Cosm - v0.0.1
 //
-// Requires:
+// This project contains a basic sketch for uploading data from an Air Quality Egg
+// Shield mounted on a Nanode to Cosm.
+//
+// I've only tested this sketch on a Nanode, but it should work with any device
+// that uses the ENC28J60 Ethernet controller. This means it *will not* work with a
+// standard Arduino Ethernet board. The EggBus sensor reading stuff would be fine,
+// but all the networky stuff would be completely different.
+//
+// ## Requirements
+//
+// To compile and upload the following sketch to your device, you'll need to have
+// the following libraries available in your Arduino libraries folder.
+//
+// Download them and unpack the zips into your libraries folder (or you can clone
+// the git repos there), then restart the IDE, and everything *should* work.
+//
 //  * EtherCard library: https://github.com/jcw/ethercard
 //  * DHT Sensor library: https://github.com/adafruit/DHT-sensor-library
 //  * EggBus library: http://aqe.wickeddevice.com/wp-content/uploads/2012/10/EggBus.zip
+//
+//
+// copyright (c) 2012 sam mulube
+
 
 #include <EtherCard.h>
 #include <stdint.h>
@@ -19,7 +33,7 @@
 EggBus eggBus;
 
 #define DHTPIN 17 // analog pin 3
-#define DHTTYPE DHT22  
+#define DHTTYPE DHT22
 DHT dht(DHTPIN, DHTTYPE);
 
 // Change these settings to match your feed and api key
@@ -35,45 +49,45 @@ char website[] PROGMEM = "api.cosm.com";
 byte Ethernet::buffer[700];
 uint32_t timer;
 Stash stash;
-  
+
 uint8_t egg_bus_address;
 float i_scaler = 0.0;
 uint32_t r0 = 0;
 uint32_t measured_value = 0;
-  
+
 void setup() {
   Serial.begin(9600);
   Serial.println(F("Air Quality Egg Shield to Cosm - v0.0.1"));
   Serial.println(F("======================================="));
- 
+
   Serial.println(F("Initializing network"));
   Serial.println(F("---------------------------------------"));
-  
-  if (ether.begin(sizeof Ethernet::buffer, mymac) == 0) 
+
+  if (ether.begin(sizeof Ethernet::buffer, mymac) == 0)
     Serial.println("  Failed to access Ethernet controller");
   if (!ether.dhcpSetup())
     Serial.println("  DHCP failed");
 
   ether.printIp("  IP:  ", ether.myip);
-  ether.printIp("  GW:  ", ether.gwip);  
-  ether.printIp("  DNS: ", ether.dnsip);  
+  ether.printIp("  GW:  ", ether.gwip);
+  ether.printIp("  DNS: ", ether.dnsip);
 
   if (!ether.dnsLookup(website))
     Serial.println("  DNS failed");
-    
+
   ether.printIp("  SRV: ", ether.hisip);
   Serial.println(F("---------------------------------------"));
 }
 
 void loop() {
   ether.packetLoop(ether.packetReceive());
-  
+
   if (millis() > timer) {
     timer = millis() + FREQUENCY;
-    
+
     eggBus.init();
     byte sd = stash.create();
-    
+
     // Capture the gas sensors from the egg bus
     // Note we're not capturing the units or resistance of the sensors here
     while((egg_bus_address = eggBus.next())) {
@@ -87,23 +101,23 @@ void loop() {
         stash.println(eggBus.getSensorValue(ii), 4);
       }
     }
-    
+
     // Capture our analog temp and humidity sensors
-    
+
     Serial.print("Humidity,");
     stash.print("Humidity,");
     float currHumidity = getHumidity();
     Serial.println(currHumidity, 2);
     stash.println(currHumidity, 2);
-    
+
     Serial.print("Temperature,");
     stash.print("Temperature,");
     float currentTemp = getTemperature();
     Serial.println(currentTemp, 2);
     stash.println(currentTemp, 2);
-    
+
     stash.save();
-    
+
     // generate the header with payload - note that the stash size is used,
     // and that a "stash descriptor" is passed in as argument using "$H"
     Stash::prepare(PSTR("PUT http://$F/v2/feeds/$F.csv HTTP/1.0" "\r\n"
@@ -114,14 +128,14 @@ void loop() {
                         "$H"),
                         website,
                         PSTR(FEED),
-                        website, 
-                        PSTR(APIKEY), 
-                        stash.size(), 
+                        website,
+                        PSTR(APIKEY),
+                        stash.size(),
                         sd);
 
     // send the packet - this also releases all stash buffers once done
     ether.tcpSend();
-    
+
     Serial.println(F("---------------------------------------"));
   }
 }
@@ -130,13 +144,13 @@ void loop() {
 float getHumidity(){
   float h = dht.readHumidity();
   if (isnan(h)){
-    //failed to get reading from DHT    
+    //failed to get reading from DHT
     delay(2500);
     h = dht.readHumidity();
     if(isnan(h)){
-      return -1; 
+      return -1;
     }
-  } 
+  }
   else return h;
 }
 
@@ -148,8 +162,8 @@ float getTemperature(){
     delay(2500);
     t = dht.readTemperature();
     if(isnan(t)){
-      return -1; 
+      return -1;
     }
-  } 
+  }
   return t;
 }
