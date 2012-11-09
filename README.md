@@ -12,7 +12,7 @@ This sketch basically combines one of the EggBus examples with the Pachube
 example in the EtherCard library, so everything that's right in this code is
 copied from there, any mistakes are from my merging of the two.
 
-The published feed should be viewable at Cosm here:
+The published feed should be viewable on Cosm here:
 
 https://cosm.com/feeds/84633
 
