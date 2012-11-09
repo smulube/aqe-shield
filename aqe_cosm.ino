@@ -39,6 +39,8 @@ DHT dht(DHTPIN, DHTTYPE);
 // Change these settings to match your feed and api key
 #define FEED "84633"
 #define APIKEY "7_t1mU275UovMDS93vVHPMMyFUmSAKxtQnNmK0JWZUlHaz0g"
+
+// Upload frequency in milliseconds
 #define FREQUENCY 20000
 
 // ethernet interface mac address, must be unique on the LAN
