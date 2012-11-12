@@ -16,8 +16,8 @@ EggBus eggBus;
 DHT dht(DHTPIN, DHTTYPE);
 
 // Change these settings to match your feed and api key
-#define FEED "84633"
-#define APIKEY "7_t1mU275UovMDS93vVHPMMyFUmSAKxtQnNmK0JWZUlHaz0g"
+#define FEED "FEED_ID"
+#define APIKEY "YOUR_API_KEY"
 
 // Upload frequency in milliseconds
 #define FREQUENCY 20000
@@ -83,7 +83,7 @@ void loop() {
       }
     }
 
-    // Capture our analog temp and humidity sensors
+    // Capture our digital temp and humidity sensors
 
     Serial.print("Humidity,");
     stash.print("Humidity,");
