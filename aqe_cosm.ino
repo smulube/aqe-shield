@@ -84,18 +84,26 @@ void loop() {
     }
 
     // Capture our digital temp and humidity sensors
-
-    Serial.print("Humidity,");
-    stash.print("Humidity,");
     float currHumidity = getHumidity();
-    Serial.println(currHumidity, 2);
-    stash.println(currHumidity, 2);
 
-    Serial.print("Temperature,");
-    stash.print("Temperature,");
+    // Don't add this datastream if the sensor reports an error
+    if (currHumidity != -1) {
+      Serial.print("Humidity,");
+      stash.print("Humidity,");
+
+      Serial.println(currHumidity, 2);
+      stash.println(currHumidity, 2);
+    }
+
     float currentTemp = getTemperature();
-    Serial.println(currentTemp, 2);
-    stash.println(currentTemp, 2);
+
+    // Don't add this datastream if the sensor reports an error
+    if (currentTemp != -1) {
+      Serial.print("Temperature,");
+      stash.print("Temperature,");
+      Serial.println(currentTemp, 2);
+      stash.println(currentTemp, 2);
+    }
 
     stash.save();
 
