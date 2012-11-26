@@ -66,6 +66,12 @@ void loop() {
   if (millis() > timer) {
     timer = millis() + FREQUENCY;
 
+    int freeCount = stash.freeCount();
+
+    if (freeCount < 10) {
+      stash.initMap(56);
+    }
+
     eggBus.init();
     byte sd = stash.create();
 
@@ -104,6 +110,12 @@ void loop() {
       Serial.println(currentTemp, 2);
       stash.println(currentTemp, 2);
     }
+
+
+    Serial.print("freeCount,");
+    stash.print("freeCount,");
+    Serial.println(freeCount);
+    stash.println(freeCount);
 
     stash.save();
 
