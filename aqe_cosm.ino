@@ -66,8 +66,16 @@ void loop() {
   if (millis() > timer) {
     timer = millis() + FREQUENCY;
 
+    // ------------------------------------------------------------------------
+    // Upload to Cosm fails if freeCount of the stash drops to 0, so this hacky
+    // thing checks the current value of freeCount, and if it's below some
+    // arbitrary value it resets it.
+    // ------------------------------------------------------------------------
+
+    // first capture the freeCount
     int freeCount = stash.freeCount();
 
+    // reset the stash if freeCount has dropped to 10
     if (freeCount < 10) {
       stash.initMap(56);
     }
@@ -111,7 +119,8 @@ void loop() {
       stash.println(currentTemp, 2);
     }
 
-
+    // In the interests of science - publish the current freeCount value as a
+    // datastream
     Serial.print("freeCount,");
     stash.print("freeCount,");
     Serial.println(freeCount);
